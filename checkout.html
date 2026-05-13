@@ -489,10 +489,10 @@
                     // Redirect to Mollie payment page
                     const checkoutUrl = data.data.checkoutUrl;
                     console.log('Checkout URL:', checkoutUrl);
-                    if (checkoutUrl && checkoutUrl.includes('mollie')) {
+                    if (checkoutUrl && (checkoutUrl.startsWith('http://') || checkoutUrl.startsWith('https://'))) {
                         window.location.href = checkoutUrl;
                     } else {
-                        throw new Error('Invalid checkout URL from backend');
+                        throw new Error('Invalid checkout URL: ' + checkoutUrl);
                     }
                 } else {
                     throw new Error(data.error || data.message || 'Payment processing failed');
