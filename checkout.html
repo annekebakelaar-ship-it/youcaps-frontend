@@ -483,17 +483,16 @@
 
                 const data = await response.json();
 
-                if (data.success || data.data?.checkoutUrl) {
+                console.log('Backend response:', data);
+
+                if (data.success && data.data) {
                     // Redirect to Mollie payment page
-                    const checkoutUrl = data.data?.checkoutUrl || data.checkoutUrl;
-                    if (checkoutUrl) {
+                    const checkoutUrl = data.data.checkoutUrl;
+                    console.log('Checkout URL:', checkoutUrl);
+                    if (checkoutUrl && checkoutUrl.includes('mollie')) {
                         window.location.href = checkoutUrl;
                     } else {
-                        // Fallback: go to success page (test mode)
-                        localStorage.setItem('checkoutData', JSON.stringify(formData));
-                        setTimeout(() => {
-                            window.location.href = 'success.html';
-                        }, 1500);
+                        throw new Error('Invalid checkout URL from backend');
                     }
                 } else {
                     throw new Error(data.error || data.message || 'Payment processing failed');
