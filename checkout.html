@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Youcaps</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #000;
+            --accent: #8b5cf6;
+            --bg: #fafaf9;
+            --border: #e7e5e4;
+            --text: #1c1917;
+            --light: #f5f5f4;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: white;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* Main */
+        .main {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            padding: 60px 0;
+        }
+
+        .checkout-form {
+            max-width: 500px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .form-section h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Stripe Elements */
+        .stripe-element {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: white;
+        }
+
+        .StripeElement {
+            font-size: 14px;
+            padding: 12px !important;
+        }
+
+        .StripeElement--focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+
+        .summary-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .summary-item:last-of-type {
+            border-bottom: none;
+            padding-top: 16px;
+            padding-bottom: 0;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--accent);
+        }
+
+        .summary-label {
+            color: #78716c;
+        }
+
+        .summary-value {
+            font-weight: 500;
+        }
+
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-top: 4px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 13px;
+            color: #78716c;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .checkbox-group a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .checkbox-group a:hover {
+            text-decoration: underline;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background: #7c3aed;
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .success-message {
+            color: #059669;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Trust Badges */
+        .trust-badges {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: #78716c;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid var(--light);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: static;
+            }
+
+            .trust-badges {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="container">
+        <div class="logo">Youcaps</div>
+    </header>
+
+    <!-- Main -->
+    <div class="container">
+        <div class="main">
+            <!-- Checkout Form -->
+            <form class="checkout-form" id="checkoutForm">
+                <div class="form-section">
+                    <h2>Billing Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" name="address" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" id="city" name="city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postalCode">Postal Code</label>
+                            <input type="text" id="postalCode" name="postalCode" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <select id="country" name="country" required>
+                            <option value="">Select country</option>
+                            <option value="NL" selected>Netherlands</option>
+                            <option value="BE">Belgium</option>
+                            <option value="DE">Germany</option>
+                            <option value="FR">France</option>
+                            <option value="AT">Austria</option>
+                            <option value="CH">Switzerland</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Payment Method</h2>
+                    
+                    <div id="card-element" class="stripe-element"></div>
+                    <div id="card-errors" class="error-message"></div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="saveCard" name="saveCard">
+                        <label for="saveCard">Save this card for future purchases</label>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="marketing" name="marketing">
+                        <label for="marketing">Send me personalized wellness tips and product updates</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">Complete Purchase</button>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Processing payment...</p>
+                </div>
+
+                <div class="trust-badges">
+                    <div class="badge">🔒 SSL Secured</div>
+                    <div class="badge">✓ 30-Day Money Back</div>
+                    <div class="badge">Cancel Anytime</div>
+                </div>
+            </form>
+
+            <!-- Order Summary -->
+            <aside class="order-summary">
+                <div class="summary-title">Your Order</div>
+                <div class="summary-item">
+                    <span class="summary-label">Youcaps Subscription</span>
+                    <span class="summary-value">€29.00</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">First Month</span>
+                    <span class="summary-value">-</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Shipping</span>
+                    <span class="summary-value">Free</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total</span>
+                    <span class="summary-value">€29.00</span>
+                </div>
+
+                <div style="background: #fffbeb; border: 1px solid #fbbf24; border-radius: 6px; padding: 16px; margin-top: 24px; font-size: 13px; color: #92400e;">
+                    <strong>Monthly Recurring</strong><br>
+                    Your card will be charged €29.00 every month. Cancel anytime.
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Stripe
+        const stripe = Stripe('pk_test_your_stripe_key_here');
+        const elements = stripe.elements();
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        // Handle card errors
+        cardElement.addEventListener('change', (event) => {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Handle form submission
+        const form = document.getElementById('checkoutForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+
+            const formData = {
+                email: document.getElementById('email').value,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                postalCode: document.getElementById('postalCode').value,
+                country: document.getElementById('country').value,
+                saveCard: document.getElementById('saveCard').checked,
+                marketing: document.getElementById('marketing').checked,
+            };
+
+            try {
+                // Create payment method
+                const { paymentMethod, error } = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement,
+                    billing_details: {
+                        email: formData.email,
+                        name: `${formData.firstName} ${formData.lastName}`,
+                        address: {
+                            line1: formData.address,
+                            city: formData.city,
+                            postal_code: formData.postalCode,
+                            country: formData.country,
+                        },
+                    },
+                });
+
+                if (error) {
+                    document.getElementById('card-errors').textContent = error.message;
+                    submitBtn.disabled = false;
+                    loading.style.display = 'none';
+                    return;
+                }
+
+                // Send to backend (replace with your actual endpoint)
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...formData,
+                        paymentMethodId: paymentMethod.id,
+                        amount: 2900, // €29 in cents
+                    })
+                });
+
+                if (response.ok) {
+                    // Simulate success and redirect
+                    localStorage.setItem('customerData', JSON.stringify(formData));
+                    setTimeout(() => {
+                        window.location.href = 'success.html';
+                    }, 1000);
+                } else {
+                    throw new Error('Payment processing failed');
+                }
+            } catch (err) {
+                document.getElementById('card-errors').textContent = err.message || 'An error occurred. Please try again.';
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

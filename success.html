@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Youcaps - Your Order Confirmed</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #000;
+            --accent: #8b5cf6;
+            --bg: #fafaf9;
+            --border: #e7e5e4;
+            --text: #1c1917;
+            --light: #f5f5f4;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: white;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* Success Section */
+        .success-section {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+            font-size: 40px;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-section h1 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--success);
+        }
+
+        .success-section p {
+            font-size: 16px;
+            color: #78716c;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Order Details */
+        .order-details {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 60px;
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #78716c;
+            font-size: 14px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Timeline / Next Steps */
+        .next-steps {
+            margin-bottom: 60px;
+        }
+
+        .next-steps h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .timeline {
+            display: grid;
+            gap: 24px;
+        }
+
+        .step {
+            display: flex;
+            gap: 20px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: #78716c;
+            line-height: 1.6;
+        }
+
+        /* Email Sent Alert */
+        .email-alert {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #047857;
+        }
+
+        .email-alert strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        /* CTA Buttons */
+        .button-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #7c3aed;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text);
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .info-box p {
+            font-size: 14px;
+            color: #78716c;
+            line-height: 1.6;
+        }
+
+        .info-icon {
+            font-size: 20px;
+        }
+
+        /* FAQ Quick Links */
+        .quick-links {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 60px;
+        }
+
+        .quick-links h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .quick-links a {
+            display: block;
+            padding: 12px 0;
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .quick-links a:last-child {
+            border-bottom: none;
+        }
+
+        .quick-links a:hover {
+            color: #7c3aed;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            color: #78716c;
+            font-size: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .success-section h1 {
+                font-size: 28px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="container">
+        <div class="logo">Youcaps</div>
+    </header>
+
+    <!-- Success Section -->
+    <div class="container">
+        <div class="success-section">
+            <div class="success-icon">✓</div>
+            <h1>Welcome to Youcaps!</h1>
+            <p>Your personalized supplement subscription is confirmed. Your custom formula is being prepared and will arrive within 5 business days.</p>
+
+            <div class="email-alert">
+                <strong>Check your email</strong>
+                We've sent a confirmation to <span id="customerEmail">your email</span>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-details">
+            <div class="detail-row">
+                <span class="detail-label">Order Number</span>
+                <span class="detail-value" id="orderNumber">#YC-2024-001</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Custom Formula</span>
+                <span class="detail-value">Personalized Supplement Blend</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Monthly Price</span>
+                <span class="detail-value">€29.00</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">First Shipment</span>
+                <span class="detail-value">Within 5 business days</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Billing Cycle</span>
+                <span class="detail-value">Every month (cancellable anytime)</span>
+            </div>
+        </div>
+
+        <!-- What's Next -->
+        <div class="next-steps">
+            <h2>What Happens Next</h2>
+            <div class="timeline">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Check Your Email</h3>
+                        <p>We've sent you a welcome email with your order confirmation and shipping details. Add us to your contacts to ensure our updates reach your inbox.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Formula Preparation</h3>
+                        <p>Our team is now preparing your personalized supplement blend in our lab. This takes 2-3 business days to ensure perfect quality.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Shipment & Tracking</h3>
+                        <p>Once ready, your package ships via DPD with free tracking. You'll receive a tracking link via email to monitor your delivery.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Start Your Wellness Journey</h3>
+                        <p>Unbox your personalized formula and start taking your custom supplements. Results typically visible within 2-4 weeks of consistent use.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Boxes -->
+        <div>
+            <div class="info-box">
+                <h3>
+                    <span class="info-icon">💪</span>
+                    How to Use Your Formula
+                </h3>
+                <p>Take one capsule daily with food, preferably in the morning. Consistency is key — your body needs 2-4 weeks to notice the benefits. Store in a cool, dry place away from direct sunlight.</p>
+            </div>
+
+            <div class="info-box">
+                <h3>
+                    <span class="info-icon">📊</span>
+                    Track Your Progress
+                </h3>
+                <p>Login to your dashboard to rate how you're feeling and get personalized insights. Our AI learns from your feedback to continuously optimize your formula.</p>
+            </div>
+
+            <div class="info-box">
+                <h3>
+                    <span class="info-icon">🔄</span>
+                    Customize Anytime
+                </h3>
+                <p>Your health changes. So can your formula. Update your profile anytime to adjust your supplement mix or pause/resume your subscription.</p>
+            </div>
+
+            <div class="info-box">
+                <h3>
+                    <span class="info-icon">✓</span>
+                    Satisfaction Guaranteed
+                </h3>
+                <p>Not happy? 30-day money-back guarantee, no questions asked. We stand behind our formulas and want you to love what you're taking.</p>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="quick-links">
+            <h3>Quick Links</h3>
+            <a href="/account">Access Your Dashboard</a>
+            <a href="/support">Contact Customer Support</a>
+            <a href="/knowledge">Read Our Health Blog</a>
+            <a href="/settings">Update Your Preferences</a>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="redirectToDashboard()">Go to Dashboard</button>
+            <button class="btn btn-secondary" onclick="shareWithFriend()">Share with Friends</button>
+        </div>
+
+        <!-- Newsletter Signup -->
+        <div style="background: var(--light); border: 1px solid var(--border); border-radius: 8px; padding: 40px; text-align: center; margin-bottom: 60px;">
+            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">Get Daily Wellness Tips</h3>
+            <p style="color: #78716c; margin-bottom: 20px; font-size: 14px;">Join our community for personalized health insights, recipe ideas, and exclusive offers.</p>
+            <div style="display: flex; gap: 12px; max-width: 400px; margin: 0 auto;">
+                <input type="email" id="newsletterEmail" placeholder="your@email.com" style="flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px;">
+                <button onclick="subscribeNewsletter()" style="background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Subscribe</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="container">
+        <p>&copy; 2024 Youcaps. All rights reserved. | Questions? Contact support@youcaps.nl</p>
+    </footer>
+
+    <script>
+        // Load customer data
+        function loadCustomerData() {
+            const customerData = localStorage.getItem('customerData');
+            if (customerData) {
+                const data = JSON.parse(customerData);
+                document.getElementById('customerEmail').textContent = data.email;
+            }
+        }
+
+        // Generate order number
+        function generateOrderNumber() {
+            const num = Math.floor(Math.random() * 100000);
+            document.getElementById('orderNumber').textContent = `#YC-${new Date().getFullYear()}-${String(num).padStart(6, '0')}`;
+        }
+
+        function redirectToDashboard() {
+            // In production, this would redirect to the actual dashboard
+            alert('Dashboard will be available upon first login. Check your email for the link.');
+        }
+
+        function shareWithFriend() {
+            const text = "Just started my personalized supplement journey with Youcaps! 🧬 My custom formula is tailored to my health goals. Save 15% with my referral link...";
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Youcaps - Personalized Supplements',
+                    text: text,
+                });
+            } else {
+                alert('Share via: Email, WhatsApp, Instagram, etc.\n\n' + text);
+            }
+        }
+
+        function subscribeNewsletter() {
+            const email = document.getElementById('newsletterEmail').value;
+            if (email) {
+                alert(`Thanks! We'll send wellness tips to ${email}`);
+                document.getElementById('newsletterEmail').value = '';
+            }
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            loadCustomerData();
+            generateOrderNumber();
+        });
+    </script>
+</body>
+</html>

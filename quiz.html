@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalization Quiz - Youcaps</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #000;
+            --accent: #8b5cf6;
+            --bg: #fafaf9;
+            --border: #e7e5e4;
+            --text: #1c1917;
+            --light: #f5f5f4;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: white;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            padding: 32px 0;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--light);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: #78716c;
+        }
+
+        /* Quiz Container */
+        .quiz-container {
+            padding: 60px 0;
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step h2 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .step p {
+            font-size: 16px;
+            color: #78716c;
+            margin-bottom: 40px;
+        }
+
+        /* Option Grid */
+        .options {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .option {
+            display: none;
+        }
+
+        .option.active-step .option {
+            display: flex;
+        }
+
+        .option-btn {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .option-btn.selected {
+            border-color: var(--accent);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .option-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn.selected .option-checkbox {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Range Slider */
+        .range-container {
+            margin-bottom: 40px;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #78716c;
+            margin-bottom: 16px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--light);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+        }
+
+        .range-value {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: 16px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 48px;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            border-color: var(--text);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #7c3aed;
+            border-color: #7c3aed;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            border-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            color: #78716c;
+            font-size: 12px;
+            border-top: 1px solid var(--border);
+            margin-top: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .step h2 {
+                font-size: 28px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="container">
+        <div class="logo">Youcaps</div>
+    </header>
+
+    <!-- Quiz -->
+    <div class="container">
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text"><span id="currentStep">1</span> of 5 steps</div>
+        </div>
+
+        <div class="quiz-container">
+            <!-- Step 1: Age -->
+            <div class="step active" id="step1">
+                <h2>What's your age range?</h2>
+                <p>This helps us tailor micronutrient levels for your life stage</p>
+                <div class="options">
+                    <button class="option-btn" onclick="selectOption(1, 'age', '18-25', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>18-25 years old</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(1, 'age', '26-35', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>26-35 years old</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(1, 'age', '36-50', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>36-50 years old</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(1, 'age', '50+', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>50+ years old</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Health Goals -->
+            <div class="step" id="step2">
+                <h2>What are your main health goals?</h2>
+                <p>Select all that apply. We'll focus your formula around these priorities.</p>
+                <div class="options">
+                    <button class="option-btn" onclick="selectMultiple(2, 'goals', 'sleep', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>Better sleep & recovery</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(2, 'goals', 'energy', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>More energy & focus</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(2, 'goals', 'muscle', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>Muscle & strength</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(2, 'goals', 'immunity', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>Immunity & wellness</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(2, 'goals', 'stress', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>Stress & mood</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(2, 'goals', 'skin', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>Skin & beauty</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Lifestyle -->
+            <div class="step" id="step3">
+                <h2>Tell us about your lifestyle</h2>
+                <p>Your daily habits shape your nutritional needs</p>
+                <div class="options">
+                    <button class="option-btn" onclick="selectMultiple(3, 'lifestyle', 'vegetarian', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>I'm vegetarian or vegan</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(3, 'lifestyle', 'athlete', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>I exercise regularly (3+ times/week)</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(3, 'lifestyle', 'sedentary', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>I have a mostly sedentary lifestyle</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(3, 'lifestyle', 'stress', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>I experience high stress regularly</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(3, 'lifestyle', 'sleep', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>I often sleep less than 7 hours</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(3, 'lifestyle', 'diet', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>My diet isn't always balanced</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Health Issues -->
+            <div class="step" id="step4">
+                <h2>Any current health concerns?</h2>
+                <p>This helps us avoid ingredients that might interact with conditions</p>
+                <div class="options">
+                    <button class="option-btn" onclick="selectMultiple(4, 'health', 'none', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>No significant health concerns</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(4, 'health', 'digestion', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>Digestive issues</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(4, 'health', 'inflammation', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>Inflammation or joint pain</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(4, 'health', 'allergies', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>Allergies or sensitivities</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(4, 'health', 'hormonal', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>Hormonal imbalances</span>
+                    </button>
+                    <button class="option-btn" onclick="selectMultiple(4, 'health', 'other', this)">
+                        <div class="option-checkbox">✓</div>
+                        <span>Other (will detail later)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 5: Final Check -->
+            <div class="step" id="step5">
+                <h2>Almost there! One last thing</h2>
+                <p>How important is sustainability in your purchasing decisions?</p>
+                <div class="range-container">
+                    <div class="range-labels">
+                        <span>Not important</span>
+                        <span>Very important</span>
+                    </div>
+                    <input type="range" id="sustainabilitySlider" min="0" max="10" value="5" oninput="updateRangeValue(this)">
+                    <div class="range-value" id="rangeValue">5</div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="button-group">
+                <button class="btn" id="prevBtn" onclick="previousStep()" style="display: none;">Back</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="container">
+        <p>Your privacy is protected • GDPR compliant • No data sold</p>
+    </footer>
+
+    <script>
+        const quizData = {
+            age: null,
+            goals: [],
+            lifestyle: [],
+            health: [],
+            sustainability: 5
+        };
+
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        function selectOption(step, key, value, element) {
+            // Single select
+            const siblings = element.parentElement.querySelectorAll('.option-btn');
+            siblings.forEach(btn => btn.classList.remove('selected'));
+            element.classList.add('selected');
+            quizData[key] = value;
+        }
+
+        function selectMultiple(step, key, value, element) {
+            // Multi-select
+            element.classList.toggle('selected');
+            if (element.classList.contains('selected')) {
+                quizData[key].push(value);
+            } else {
+                quizData[key] = quizData[key].filter(item => item !== value);
+            }
+        }
+
+        function updateRangeValue(input) {
+            document.getElementById('rangeValue').textContent = input.value;
+            quizData.sustainability = parseInt(input.value);
+        }
+
+        function updateProgress() {
+            const percentage = (currentStep / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('currentStep').textContent = currentStep;
+
+            // Update button visibility
+            if (currentStep === 1) {
+                document.getElementById('prevBtn').style.display = 'none';
+            } else {
+                document.getElementById('prevBtn').style.display = 'block';
+            }
+
+            if (currentStep === totalSteps) {
+                document.getElementById('nextBtn').textContent = 'View Your Formula';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Next';
+            }
+        }
+
+        function isStepValid() {
+            switch (currentStep) {
+                case 1:
+                    return quizData.age !== null;
+                case 2:
+                    return quizData.goals.length > 0;
+                case 3:
+                    return quizData.lifestyle.length > 0;
+                case 4:
+                    return quizData.health.length > 0;
+                case 5:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        function nextStep() {
+            if (!isStepValid()) {
+                alert('Please select at least one option to continue');
+                return;
+            }
+
+            if (currentStep === totalSteps) {
+                // Redirect to formula preview
+                localStorage.setItem('quizData', JSON.stringify(quizData));
+                window.location.href = 'formula-preview.html';
+                return;
+            }
+
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            currentStep++;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            updateProgress();
+            window.scrollTo(0, 0);
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                currentStep--;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                updateProgress();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>
